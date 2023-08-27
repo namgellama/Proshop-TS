@@ -1,22 +1,10 @@
 import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Rating from './Rating';
-
-interface Product {
-	id: number;
-	name: string;
-	image: string;
-	description: string;
-	brand: string;
-	category: string;
-	price: number;
-	countInStock: number;
-	rating: number;
-	numReviews: number;
-}
+import { Product as IProduct } from '../interfaces/product';
 
 interface Props {
-	product: Product;
+	product: IProduct;
 }
 
 const Product = ({ product }: Props) => {
