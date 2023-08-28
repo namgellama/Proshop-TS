@@ -3,6 +3,9 @@
 	"version": "1.0.0",
 	"description": "",
 	"main": "server.js",
+	"prisma": {
+		"seed": "node --require esbuild-register prisma/seed.ts"
+	},
 	"scripts": {
 		"server": "nodemon src/server.ts"
 	},
