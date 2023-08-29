@@ -14,7 +14,7 @@ import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { useState } from 'react';
 import { addToCart } from '../slices/cartSlice';
-import { useAppDispatch, useAppSelector } from '../hooks';
+import { useAppDispatch } from '../hooks';
 import { CartItems } from '../slices/cartSlice';
 
 const ProductPage = () => {
