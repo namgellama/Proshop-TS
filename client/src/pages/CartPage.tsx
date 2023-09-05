@@ -11,7 +11,7 @@ import {
 import { FaTrash } from 'react-icons/fa';
 import Message from '../components/Message';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { addToCart } from '../slices/cartSlice';
+import { addToCart, removeFromCart } from '../slices/cartSlice';
 import { Product } from '../interfaces/product';
 
 const CartPage = () => {
@@ -23,6 +23,14 @@ const CartPage = () => {
 
 	const addToCartHandler = (product: Product, qty: number) => {
 		dispatch(addToCart({ ...product, qty }));
+	};
+
+	const removeFromCartHandler = (id: number) => {
+		dispatch(removeFromCart(id));
+	};
+
+	const checkoutHandler = () => {
+		navigate('/login?redirect=/shipping');
 	};
 
 	return (
@@ -61,7 +69,11 @@ const CartPage = () => {
 										</Form.Control>
 									</Col>
 									<Col md={2}>
-										<Button type="button" variant="light">
+										<Button
+											type="button"
+											variant="light"
+											onClick={() => removeFromCartHandler(item.id)}
+										>
 											<FaTrash />
 										</Button>
 									</Col>
@@ -90,6 +102,7 @@ const CartPage = () => {
 								type="button"
 								className="btn-block"
 								disabled={cartItems.length === 0}
+								onClick={checkoutHandler}
 							>
 								Proceed To Checkout
 							</Button>
