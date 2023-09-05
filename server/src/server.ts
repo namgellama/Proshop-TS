@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
-import products from './data/products';
 import productRoutes from './routes/productRoutes';
+import userRoutes from './routes/userRoutes';
 import { notFound, errorHandler } from './middlewares/errorMiddleware';
 
 dotenv.config();
@@ -13,6 +13,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use('/api/products', productRoutes);
+app.use('/api/users', userRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
