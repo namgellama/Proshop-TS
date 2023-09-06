@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 import productRoutes from './routes/productRoutes';
 import userRoutes from './routes/userRoutes';
 import { notFound, errorHandler } from './middlewares/errorMiddleware';
@@ -11,6 +12,9 @@ const app = express();
 // Body parser middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Cookie parser middleware
+app.use(cookieParser());
 
 app.get('/', (req: Request, res: Response) => {
 	res.send('API is running');

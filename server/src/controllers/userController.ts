@@ -1,36 +1,22 @@
 import { Request, Response } from 'express';
 import asyncHandler from '../middlewares/asyncHandler';
 import { db } from '../config/db.server';
+import { generateToken, hashPassword, matchPassword } from '../utils/auth';
+import jwt, { Secret } from 'jsonwebtoken';
+import ms from 'ms';
+import { User, UserResponse } from '../interfaces/userInterface';
 
-interface LoginRequestBody {
-	email: string;
-	password: string;
-	isAdmin: boolean;
-}
-interface LoginResponse {
-	id: number;
-	name: string;
-	email: string;
-	isAdmin: boolean;
+interface AppRequest<T> extends Request {
+	body: T;
 }
 
-import bcrypt from 'bcryptjs';
-
-const matchPassword = async (
-	enteredPassword: string,
-	hashedPassword: string
-) => {
-	return await bcrypt.compare(enteredPassword, hashedPassword);
-};
+type UserRequest = AppRequest<{ user: { account: string } }>;
 
 // @desc Auth user & get token
 // @route POST /api/users/login
 // access Public
 const authUser = asyncHandler(
-	async (
-		req: Request<{}, {}, LoginRequestBody>,
-		res: Response<LoginResponse>
-	) => {
+	async (req: Request<{}, {}, User>, res: Response<UserResponse>) => {
 		const { email, password } = req.body;
 
 		const user = await db.user.findUnique({
@@ -38,7 +24,9 @@ const authUser = asyncHandler(
 		});
 
 		if (user && (await matchPassword(password, user.password))) {
-			res.json({
+			generateToken(res, user.id);
+
+			res.status(200).json({
 				id: user.id,
 				name: user.name,
 				email: user.email,
@@ -54,30 +42,104 @@ const authUser = asyncHandler(
 // @desc Register user
 // @route POST /api/users
 // access Public
-const registerUser = asyncHandler(async (req: Request, res: Response) => {
-	res.send('register user');
-});
+const registerUser = asyncHandler(
+	async (req: Request<{}, {}, User>, res: Response<UserResponse>) => {
+		const { name, email, password } = req.body;
+		const hashedPassword = await hashPassword(password);
+
+		const userExists = await db.user.findUnique({ where: { email } });
+
+		if (userExists) {
+			res.status(400);
+			throw new Error('User already exists');
+		}
+
+		const user = await db.user.create({
+			data: {
+				name,
+				email,
+				password: hashedPassword,
+			},
+		});
+
+		if (user) {
+			generateToken(res, user.id);
+
+			res.status(201).json({
+				id: user.id,
+				name: user.name,
+				email: user.email,
+				isAdmin: user.isAdmin,
+			});
+		} else {
+			res.status(400);
+			throw new Error('Invalid user data');
+		}
+	}
+);
 
 // @desc Logout user /clear cookie
 // @route POST /api/users/logout
 // access Private
 const logoutUser = asyncHandler(async (req: Request, res: Response) => {
-	res.send('logout user');
+	res.cookie('jwt', '', { httpOnly: true, expires: new Date(0) });
+
+	res.status(200).json({ message: 'Logged out successfully' });
 });
 
 // @desc Get user profile
 // @route GET /api/users/profile
 // access Private
 const getUserProfile = asyncHandler(async (req: Request, res: Response) => {
-	res.send('Get user profile');
+	const user = await db.user.findUnique({ where: { id: req.user.id } });
+
+	if (user) {
+		res.status(200).json({
+			id: user.id,
+			name: user.name,
+			email: user.email,
+			isAdmin: user.isAdmin,
+		});
+	} else {
+		res.status(404);
+		throw new Error('User not fouhnd');
+	}
 });
 
 // @desc Update user profile
 // @route PUT /api/users/profile
 // access Private
-const updateUserProfile = asyncHandler(async (req: Request, res: Response) => {
-	res.send('update user profile');
-});
+const updateUserProfile = asyncHandler(
+	async (req: Request<{}, {}, User>, res: Response) => {
+		const user = await db.user.findUnique({ where: { id: req.user.id } });
+
+		if (user) {
+			user.name = req.body.name || user.name;
+			user.email = req.body.email || user.email;
+
+			if (req.body.password) {
+				user.password = req.body.password;
+			}
+
+			const updatedUser = await db.user.update({
+				where: {
+					id: req.user.id,
+				},
+				data: user,
+			});
+
+			res.status(200).json({
+				id: updatedUser.id,
+				name: updatedUser.name,
+				email: updatedUser.email,
+				isAdmin: updatedUser.isAdmin,
+			});
+		} else {
+			res.status(404);
+			throw new Error('User not found');
+		}
+	}
+);
 
 // @desc Get users
 // @route PUT /api/users
