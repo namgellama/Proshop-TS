@@ -34,7 +34,6 @@ const ProductPage = () => {
 	const addToCartHandler = () => {
 		if (product) {
 			const cartItem: CartItems = { ...product, qty };
-			console.log(cartItem);
 			dispatch(addToCart(cartItem));
 			navigate('/cart');
 		}
