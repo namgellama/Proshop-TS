@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt, { Secret } from 'jsonwebtoken';
-import asyncHandler from './asyncHandler';
 import { db } from '../config/db.server';
-import { User } from '../interfaces/userInterface';
+import asyncHandler from './asyncHandler';
 
 interface DecodedToken {
 	userId: number;
@@ -54,4 +53,4 @@ const admin = (req: Request, res: Response, next: NextFunction) => {
 	}
 };
 
-export { protect, admin };
+export { admin, protect };
