@@ -1,5 +1,6 @@
 import { db } from '../src/config/db.server';
 import products from '../src/data/products';
+import bcrypt from 'bcryptjs';
 
 interface Proudct {
 	name: string;
@@ -33,13 +34,11 @@ async function seed() {
 	// 		});
 	// 	})
 	// );
-
 	const user = await db.user.findFirst({
 		where: {
 			id: 1,
 		},
 	});
-
 	await Promise.all(
 		getProducts().map((product) => {
 			const {
@@ -78,8 +77,20 @@ function getUsers(): Array<User> {
 		{
 			name: 'admin',
 			email: 'admin@gmail.com',
-			password: 'admin',
+			password: bcrypt.hashSync('admin', 10),
 			isAdmin: true,
+		},
+		{
+			name: 'John Doe',
+			email: 'john@gmail.com',
+			password: bcrypt.hashSync('admin', 10),
+			isAdmin: false,
+		},
+		{
+			name: 'Jane Doe',
+			email: 'jane@gmail.com',
+			password: bcrypt.hashSync('admin', 10),
+			isAdmin: false,
 		},
 	];
 }

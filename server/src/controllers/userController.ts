@@ -2,12 +2,54 @@ import { Request, Response } from 'express';
 import asyncHandler from '../middlewares/asyncHandler';
 import { db } from '../config/db.server';
 
+interface LoginRequestBody {
+	email: string;
+	password: string;
+	isAdmin: boolean;
+}
+interface LoginResponse {
+	id: number;
+	name: string;
+	email: string;
+	isAdmin: boolean;
+}
+
+import bcrypt from 'bcryptjs';
+
+const matchPassword = async (
+	enteredPassword: string,
+	hashedPassword: string
+) => {
+	return await bcrypt.compare(enteredPassword, hashedPassword);
+};
+
 // @desc Auth user & get token
 // @route POST /api/users/login
 // access Public
-const authUser = asyncHandler(async (req: Request, res: Response) => {
-	res.send('auth user');
-});
+const authUser = asyncHandler(
+	async (
+		req: Request<{}, {}, LoginRequestBody>,
+		res: Response<LoginResponse>
+	) => {
+		const { email, password } = req.body;
+
+		const user = await db.user.findUnique({
+			where: { email },
+		});
+
+		if (user && (await matchPassword(password, user.password))) {
+			res.json({
+				id: user.id,
+				name: user.name,
+				email: user.email,
+				isAdmin: user.isAdmin,
+			});
+		} else {
+			res.status(401);
+			throw new Error('Invalid email or password');
+		}
+	}
+);
 
 // @desc Register user
 // @route POST /api/users
