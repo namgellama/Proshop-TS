@@ -45,8 +45,8 @@ const RegisterPage = () => {
 				}).unwrap();
 				dispatch(setCredentials({ ...res }));
 				navigate(redirect);
-			} catch (error) {
-				toast.error('Invalid email or password');
+			} catch (error: any) {
+				toast.error(error?.data?.message || error.error);
 			}
 		}
 	};

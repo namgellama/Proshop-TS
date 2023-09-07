@@ -6,6 +6,7 @@ import logo from '../assets/logo.png';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { useLogoutMutation } from '../slices/usersApiSlice';
 import { logout } from '../slices/authSlice';
+import { toast } from 'react-toastify';
 
 const Header = () => {
 	const { cartItems } = useAppSelector((state) => state.cart);
@@ -21,8 +22,8 @@ const Header = () => {
 			await logoutApiCall({}).unwrap();
 			dispatch(logout());
 			navigate('/login');
-		} catch (error) {
-			console.log('An error occured');
+		} catch (error: any) {
+			toast.error(error?.data?.message || error.error);
 		}
 	};
 

@@ -12,7 +12,9 @@ const HomePage = () => {
 			{isLoading ? (
 				<Loader />
 			) : error ? (
-				<Message variant="danger">An error has occured</Message>
+				<Message variant="danger">
+					{'data' in error && (error?.data?.message || error.error)}
+				</Message>
 			) : (
 				<>
 					<h1>Latest Products</h1>

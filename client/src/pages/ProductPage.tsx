@@ -47,7 +47,9 @@ const ProductPage = () => {
 			{isLoading ? (
 				<Loader />
 			) : error ? (
-				<Message variant="danger">An error occured</Message>
+				<Message variant="danger">
+					{'data' in error && (error?.data?.message || error.error)}
+				</Message>
 			) : (
 				<Row>
 					<Col md={5}>
