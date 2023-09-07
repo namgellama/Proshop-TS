@@ -6,19 +6,28 @@ export interface CartItems extends Product {
 	qty: number;
 }
 
+interface ShippingAddress {
+	address: string;
+	city: string;
+	postalCode: string;
+	country: string;
+}
+
 export interface CartState {
 	cartItems: CartItems[];
 	itemsPrice: number;
 	totalPrice: number;
 	shippingPrice: number;
 	taxPrice: number;
+	paymentMethod: string;
+	shippingAddress: ShippingAddress;
 }
 
 const storedCart = localStorage.getItem('cart');
 
 const initialState: CartState = storedCart
 	? JSON.parse(storedCart)
-	: { cartItems: [] };
+	: { cartItems: [], shippingAddress: {}, paymentMethod: 'Paypal' };
 
 const cartSlice = createSlice({
 	name: 'cart',
@@ -44,9 +53,14 @@ const cartSlice = createSlice({
 
 			return updateCart(state);
 		},
+		saveShippingAddress: (state, action) => {
+			state.shippingAddress = action.payload;
+			return updateCart(state);
+		},
 	},
 });
 
-export const { addToCart, removeFromCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, saveShippingAddress } =
+	cartSlice.actions;
 
 export default cartSlice.reducer;
