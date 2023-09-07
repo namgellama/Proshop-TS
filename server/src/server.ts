@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import productRoutes from './routes/productRoutes';
 import userRoutes from './routes/userRoutes';
+import orderRoutes from './routes/orderRoutes';
 import { notFound, errorHandler } from './middlewares/errorMiddleware';
 
 dotenv.config();
@@ -22,6 +23,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/orders', orderRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
