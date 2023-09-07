@@ -4,6 +4,7 @@ import FormContainer from '../components/FormContainer';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { useNavigate } from 'react-router-dom';
 import { saveShippingAddress } from '../slices/cartSlice';
+import CheckoutSteps from '../components/CheckoutSteps';
 
 const ShippingPage = () => {
 	const { shippingAddress } = useAppSelector((state) => state.cart);
@@ -26,6 +27,8 @@ const ShippingPage = () => {
 
 	return (
 		<FormContainer>
+			<CheckoutSteps step1 step2 />
+
 			<h1>Shipping</h1>
 
 			<Form onSubmit={submitHandler}>
