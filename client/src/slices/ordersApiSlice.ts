@@ -4,6 +4,7 @@ import { Product } from '../interfaces/product';
 
 interface OrderItems extends Product {
 	qty: number;
+	product: Product;
 }
 
 interface ShippingAddress {
@@ -11,6 +12,11 @@ interface ShippingAddress {
 	city: string;
 	postalCode: string;
 	country: string;
+}
+
+export interface User {
+	name: string;
+	email: string;
 }
 
 export interface Order {
@@ -22,6 +28,11 @@ export interface Order {
 	totalPrice: number;
 	shippingPrice: number;
 	taxPrice: number;
+	user: User;
+	isDelivered: boolean;
+	isPaid: boolean;
+	deliveredAt: string;
+	paidAt: string;
 }
 
 export const ordersApiSlice = apiSlice.injectEndpoints({
@@ -33,7 +44,14 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 				body: data,
 			}),
 		}),
+		getOrderDetails: builder.query<Order, number>({
+			query: (orderId: number) => ({
+				url: `${ORDERS_URL}/${orderId}`,
+			}),
+			keepUnusedDataFor: 5,
+		}),
 	}),
 });
 
-export const { useCreateOrderMutation } = ordersApiSlice;
+export const { useCreateOrderMutation, useGetOrderDetailsQuery } =
+	ordersApiSlice;

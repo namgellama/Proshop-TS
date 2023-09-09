@@ -90,11 +90,25 @@ const getOrderById = asyncHandler(async (req: Request, res: Response) => {
 		where: {
 			id: parseInt(req.params.id),
 		},
+
 		include: {
 			user: {
 				select: {
 					name: true,
 					email: true,
+				},
+			},
+			shippingAddress: {
+				select: {
+					address: true,
+					city: true,
+					postalCode: true,
+					country: true,
+				},
+			},
+			orderItems: {
+				include: {
+					product: true,
 				},
 			},
 		},
