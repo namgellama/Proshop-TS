@@ -4,7 +4,7 @@ import { Product } from '../interfaces/product';
 
 interface OrderItems extends Product {
 	qty: number;
-	product: Product;
+	productId: number;
 }
 
 interface ShippingAddress {

@@ -4,6 +4,7 @@ import { updateCart } from '../utils/cartUtils';
 
 export interface CartItems extends Product {
 	qty: number;
+	productId: number;
 }
 
 interface ShippingAddress {

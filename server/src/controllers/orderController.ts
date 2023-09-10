@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import asyncHandler from '../middlewares/asyncHandler';
 import { db } from '../config/db.server';
 import { Order } from '../interfaces/orderInterface';
-import { userInfo } from 'os';
 
 // @desc Create new order
 // @route POST /api/orders
@@ -52,15 +51,15 @@ const addOrderItems = asyncHandler(
 					connect: { id: user.id },
 				},
 				orderItems: {
-					create: orderItems.map((item) => ({
-						name: item.name,
-						qty: item.qty,
-						image: item.image,
-						price: item.price,
-						product: {
-							connect: { id: item.id },
-						},
-					})),
+					createMany: {
+						data: orderItems.map((item) => ({
+							name: item.name,
+							qty: item.qty,
+							image: item.image,
+							price: item.price,
+							productId: item.id,
+						})),
+					},
 				},
 			},
 		});
@@ -126,7 +125,16 @@ const getOrderById = asyncHandler(async (req: Request, res: Response) => {
 // @route PUT /api/orders/:id/pay
 // access Private
 const updateOrderToPaid = asyncHandler(async (req: Request, res: Response) => {
-	res.send('update order to paid');
+	const order = await db.order.findUnique({
+		where: { id: parseInt(req.params.id) },
+	});
+
+	// if (order) {
+	// 	order.isPaid = true;
+	// 	order.paidAt = Date.now()
+	// 	order.payme
+
+	// }
 });
 
 // @desc Update order to delivered

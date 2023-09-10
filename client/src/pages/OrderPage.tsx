@@ -109,6 +109,7 @@ const OrderPage = () => {
 								</Row>
 							</ListGroup.Item>
 							{/* PAY ORDER PLACEHOLDER */}
+							{/* MARK AS DELIVERD PLACEHOLDER */}
 						</ListGroup>
 					</Card>
 				</Col>

@@ -20,7 +20,7 @@ model User {
   updatedAt DateTime  @updatedAt
   products  Product[]
   orders    Order[]
-  Review    Review[]
+  reviews   Review[]
 }
 
 model Product {
@@ -36,17 +36,17 @@ model Product {
   countInStock Int         @default(0)
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
-  orders       Order[]
-  OrderItem    OrderItem[]
+  orderItems   OrderItem[]
   userId       Int
   user         User        @relation(fields: [userId], references: [id])
   reviews      Review[]
+  Order        Order[]
 }
 
 model Review {
   id        Int      @id @default(autoincrement())
   name      String
-  rating    Int
+  rating    Float
   comment   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -68,17 +68,16 @@ model Order {
   deliveredAt       DateTime?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
-  Product           Product?        @relation(fields: [productId], references: [id])
-  productId         Int?
   userId            Int
   user              User            @relation(fields: [userId], references: [id])
   orderItems        OrderItem[]
   shippingAddress   ShippingAddress @relation(fields: [shippingAddressId], references: [id])
   shippingAddressId Int
   paymentMethod     String
-  paymentResult     PaymentResult[] @relation("PaymentResultToOrder")
   PaymentResult     PaymentResult?  @relation(fields: [paymentResultId], references: [id])
   paymentResultId   Int?
+  Product           Product?        @relation(fields: [productId], references: [id])
+  productId         Int?
 }
 
 model OrderItem {
@@ -107,6 +106,5 @@ model PaymentResult {
   status       String
   updateTime   String?
   emailAddress String?
-  order        Order[] @relation("PaymentResultToOrder")
-  Order        Order[]
+  orders       Order[]
 }

@@ -13,6 +13,7 @@ export interface Product {
 
 interface OrderItems extends Product {
 	qty: number;
+	productId: number;
 }
 
 interface ShippingAddress {
